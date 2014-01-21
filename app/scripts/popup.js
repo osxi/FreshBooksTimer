@@ -31,6 +31,26 @@ $(function() {
     $('#notes').val('');
     port.postMessage({action: 'resetTimer'});
   });
+  var api = new FreshbooksApi(),
+      projects = api.getData('projects'),
+      projectSelect = $('#project'),
+      tasks = api.getData('tasks'),
+      taskSelect = $('#task'),
+      staffs = api.getData('staffs'),
+      staffSelect = $('#staff');
+
+  $.each(projects, function(key, project){
+    var option = '<option value="'+project['project_id']+'">'+project['name']+'</option>';
+    projectSelect.append(option);
+  });
+  $.each(tasks, function(key, task){
+    var option = '<option value="'+task['task_id']+'">'+task['name']+'</option>';
+    taskSelect.append(option);
+  });
+  $.each(staffs, function(key, staff){
+    var option = '<option value="'+staff['staff_id']+'">'+staff['first_name']+' '+staff['last_name']+'</option>';
+    staffSelect.append(option);
+  });
 });
 var cardData = {};
 

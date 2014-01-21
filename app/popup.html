@@ -5,6 +5,7 @@
         <!-- build:js scripts/popup.js -->
         <script src="scripts/jquery.js"></script>
         <script src="scripts/jquery.stopwatch.js"></script>
+        <script src="scripts/freshbooks_api.js"></script>
         <script src="scripts/popup.js"></script>
         <!-- endbuild -->
     </head>
@@ -16,6 +17,17 @@
         <button id="reset">Reset</button>
       </div>
       <textarea id="notes"></textarea>
+      <select id="project" name="project_id">
+        <option>-- Select Project --</option>
+      </select>
+      <br>
+      <select id="staff" name="staff_id">
+        <option>-- Select Staff --</option>
+      </select>
+      <br>
+      <select id="task" name="task_id">
+        <option>-- Select Task --</option>
+      </select>
 
       <p>Card Id: <span id="cardId"></span></p>
       <p>Card Name: <span id="cardName"></span></p>
