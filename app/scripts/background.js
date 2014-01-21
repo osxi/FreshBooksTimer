@@ -35,8 +35,19 @@ chrome.runtime.onConnect.addListener(function(port) {
       if(!activeTimer) {
         activeTimer = new Timer();
       }
-      if(msg.data && msg.data.notes) {
-        activeTimer.notes = msg.data.notes
+      if(msg.data) {
+        if(msg.data.notes) {
+          activeTimer.notes = msg.data.notes
+        }
+        if(msg.data.project_id) {
+          activeTimer.project_id = msg.data.project_id
+        }
+        if(msg.data.task_id) {
+          activeTimer.task_id = msg.data.task_id
+        }
+        if(msg.data.staff_id) {
+          activeTimer.staff_id = msg.data.staff_id
+        }
       }
       createStopwatch(activeTimer.hours);
       stopwatch.stopwatch('start');

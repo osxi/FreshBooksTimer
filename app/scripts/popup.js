@@ -11,16 +11,20 @@ port.onMessage.addListener(function(msg){
 
 $(function() {
   stopwatch = $('#stopwatch');
-  $('#stopwatch').text(chrome.extension.getBackgroundPage().activeTimer.hours);
-  $('#notes').val(chrome.extension.getBackgroundPage().activeTimer.notes);
+  console.log('doc ready');
+
   chrome.tabs.executeScript(null, { file: "scripts/jquery.js" }, function() {
     chrome.tabs.executeScript(null, { file: "scripts/get_data.js" });
   });
+
   $('#start').click(function() {
     port.postMessage({
       action: 'startTimer',
       data: {
-        notes: $('#notes').val()
+        notes: $('#notes').val(),
+        staff_id: $('#staff').val(),
+        project_id: $('#project').val(),
+        task_id: $('#task').val()
       }
     });
   });
@@ -51,6 +55,11 @@ $(function() {
     var option = '<option value="'+staff['staff_id']+'">'+staff['first_name']+' '+staff['last_name']+'</option>';
     staffSelect.append(option);
   });
+  $('#stopwatch').text(chrome.extension.getBackgroundPage().activeTimer.hours);
+  $('#notes').val(chrome.extension.getBackgroundPage().activeTimer.notes);
+  $('#staff').val(chrome.extension.getBackgroundPage().activeTimer.staff_id);
+  $('#project').val(chrome.extension.getBackgroundPage().activeTimer.project_id);
+  $('#task').val(chrome.extension.getBackgroundPage().activeTimer.task_id);
 });
 var cardData = {};
 
