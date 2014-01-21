@@ -28,6 +28,7 @@ $(function() {
     port.postMessage({action: 'stopTimer'});
   });
   $('#reset').click(function() {
+    $('#notes').val('');
     port.postMessage({action: 'resetTimer'});
   });
 });

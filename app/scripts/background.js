@@ -18,11 +18,19 @@ var Timer = function(options) {
 var activeTimer = new Timer();
 var openPort;
 
+var setInactiveIcon = function() {
+  chrome.browserAction.setIcon({path: 'images/icon-38-inactive.png'})
+};
+var setActiveIcon = function() {
+  chrome.browserAction.setIcon({path: 'images/icon-38.png'})
+};
+
 chrome.runtime.onConnect.addListener(function(port) {
   console.assert(port.name == "freshbooks-trello");
   openPort = port;
   port.onMessage.addListener(function(msg) {
     if (msg.action == "startTimer") {
+      setActiveIcon();
       if(!activeTimer) {
         activeTimer = new Timer();
       }
@@ -31,15 +39,14 @@ chrome.runtime.onConnect.addListener(function(port) {
       }
       createStopwatch(activeTimer.hours);
       stopwatch.stopwatch('start');
-      console.log('start timer..');
 
     } else if (msg.action == "stopTimer") {
+      setInactiveIcon();
       stopwatch.stopwatch('stop');
-      console.log('stop timer..');
 
     } else if (msg.action == "resetTimer") {
+      setInactiveIcon();
       stopwatch.stopwatch('reset');
-      console.log('reset timer..');
       activeTimer = new Timer();
 
     }
@@ -57,7 +64,7 @@ var createStopwatch = function(startTime) {
     {startTime: startTime * 1000}
   );
   stopwatch.bind('tick.stopwatch', function(e, elapsed) {
-    var currentHours = (elapsed / 1000).toFixed(2);
+    var currentHours = (elapsed / 1000);
     activeTimer.hours = currentHours;
     if(openPort) {
       openPort.postMessage({
