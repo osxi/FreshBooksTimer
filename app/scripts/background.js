@@ -2,6 +2,10 @@
 
 var $ = jQuery, stopwatch;
 
+var defaults = {
+  appUrl: 'http://localhost:3000/api'
+}
+
 chrome.runtime.onInstalled.addListener(function (details) {
     console.log('previousVersion', details.previousVersion);
 });

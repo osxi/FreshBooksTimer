@@ -4,7 +4,7 @@
     "manifest_version": 2,
     "description": "__MSG_appDescription__",
     "permissions": [
-      "activeTab"
+      "activeTab","*://*/"
     ],
     "icons": {
         "16": "images/icon-16.png",
@@ -23,7 +23,7 @@
     "default_title": "freshbookstrello",
     "default_popup": "popup.html"
   },
-  "options_page": "options.html",
+  "options_page": "options_custom/index.html",
   "content_scripts": [
     {
       "matches": [
