@@ -28,5 +28,7 @@ FreshTrello.prototype.getData = function() {
 $(function() {
   var freshTrello = new FreshTrello();
   var cardData = freshTrello.getData();
-  chrome.runtime.sendMessage({cardData: cardData});
+  if(cardData) {
+    chrome.runtime.sendMessage({cardData: cardData});
+  }
 });

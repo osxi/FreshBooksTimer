@@ -2,9 +2,8 @@
 
 var $ = jQuery, stopwatch;
 
-
 chrome.runtime.onInstalled.addListener(function (details) {
-    console.log('previousVersion', details.previousVersion);
+  console.log('previousVersion', details.previousVersion);
 });
 
 var cardData = {};
@@ -13,8 +12,29 @@ var Timer = function(options) {
   if(options == null) {
     options = {};
   }
+  this.seconds = options.seconds ? options.seconds : 0;
+  this.minutes = options.minutes ? options.minutes : 0;
   this.hours = options.hours ? options.hours : 0.0;
   this.notes = options.notes ? options.notes : '';
+}
+Timer.prototype.setSeconds = function(seconds) {
+  this.seconds = seconds;
+  this.minutes = this.seconds / 60;
+  this.hours = this.minutes / 60;
+}
+Timer.prototype.formatted = function() {
+  function pad2(number) {
+    return (number < 10 ? '0' : '') + number;
+  }
+  function defaultFormatMilliseconds(seconds) {
+      var x = seconds, minutes, hours;
+      x /= 60;
+      minutes = Math.floor(x % 60);
+      x /= 60;
+      hours = Math.floor(x % 24);
+      return [pad2(hours), pad2(minutes), pad2(seconds)].join(':');
+  }
+  return defaultFormatMilliseconds(this.seconds);
 }
 var activeTimer = new Timer();
 var openPort;
@@ -36,6 +56,7 @@ chrome.runtime.onConnect.addListener(function(port) {
         activeTimer = new Timer();
       }
       if(msg.data) {
+        console.log(msg.data);
         if(msg.data.notes) {
           activeTimer.notes = msg.data.notes
         }
@@ -49,7 +70,7 @@ chrome.runtime.onConnect.addListener(function(port) {
           activeTimer.staff_id = msg.data.staff_id
         }
       }
-      createStopwatch(activeTimer.hours);
+
       stopwatch.stopwatch('start');
 
     } else if (msg.action == "stopTimer") {
@@ -61,6 +82,8 @@ chrome.runtime.onConnect.addListener(function(port) {
       stopwatch.stopwatch('reset');
       activeTimer = new Timer();
 
+    } else if (msg.action == 'loaded') {
+      console.log('loaded popup');
     }
   });
   port.onDisconnect.addListener(function() {
@@ -69,6 +92,7 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 var createStopwatch = function(startTime) {
+  console.log('create sotpwatch..');
   if(stopwatch) {
     stopwatch.stopwatch('destroy');
   }
@@ -76,19 +100,29 @@ var createStopwatch = function(startTime) {
     {startTime: startTime * 1000}
   );
   stopwatch.bind('tick.stopwatch', function(e, elapsed) {
-    var currentHours = (elapsed / 1000);
-    activeTimer.hours = currentHours;
+    var currentSeconds = (elapsed / 1000);
+    activeTimer.setSeconds(currentSeconds);
     if(openPort) {
       openPort.postMessage({
         action: 'tick',
         data: {
-          time: elapsed
+          time: elapsed,
+          formatted: activeTimer.formatted()
         }
       });
     }
   });
 };
 
-$(function() {
+chrome.browserAction.onClicked.addListener(function() {
+  console.log('clicked!')
+  if(openPort) {
+    openPort.postMessage({
+      action: 'clicked'
+    });
+  }
 });
 
+$(function() {
+  createStopwatch(0);
+});
