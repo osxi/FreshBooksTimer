@@ -1,3 +1,6 @@
+var defaults = {
+  appUrl: 'http://localhost:3000/api'
+}
 var FreshbooksApi = function() {
   this.apiUrl = localStorage['store.settings.apiUrl'];
   this.authToken = localStorage['store.settings.authToken'];
@@ -9,15 +12,21 @@ FreshbooksApi.prototype.generateUrl = function(path) {
   return base + authInfo;
 }
 FreshbooksApi.prototype.getProjects = function() {
-  return $.getJSON(this.generateUrl('projects'));
+  return jQuery.getJSON(this.generateUrl('projects'));
 }
 FreshbooksApi.prototype.getTasks = function() {
-  return $.getJSON(this.generateUrl('tasks'));
+  return jQuery.getJSON(this.generateUrl('tasks'));
 }
 FreshbooksApi.prototype.getStaff = function() {
-  return $.getJSON(this.generateUrl('staffs'));
+  return jQuery.getJSON(this.generateUrl('staffs'));
 }
 FreshbooksApi.prototype.createTimeEntry = function(data) {
-  return $.post(this.generateUrl('time_entries'), { time_entry: data });
+  return jQuery.post(this.generateUrl('time_entries'), { time_entry: data });
+}
+FreshbooksApi.prototype.storeData = function(key, data) {
+  return localStorage.setItem('store.data.'+key, JSON.stringify(data));
+}
+FreshbooksApi.prototype.getData = function(key) {
+  return JSON.parse(localStorage.getItem('store.data.'+key));
 }
 
