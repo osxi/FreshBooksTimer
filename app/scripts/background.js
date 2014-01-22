@@ -6,8 +6,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
   console.log('previousVersion', details.previousVersion);
 });
 
-var cardData = {};
-
 var Timer = function(options) {
   if(options == null) {
     options = {};
@@ -73,15 +71,30 @@ chrome.runtime.onConnect.addListener(function(port) {
 
       stopwatch.stopwatch('start');
 
-    } else if (msg.action == "stopTimer") {
+    } else if (msg.action == 'pauseTimer') {
       setInactiveIcon();
       stopwatch.stopwatch('stop');
 
-    } else if (msg.action == "resetTimer") {
+    } else if (msg.action == "resetTimer" || msg.action == "setTimer") {
+      var seconds = 0;
       setInactiveIcon();
-      stopwatch.stopwatch('reset');
-      activeTimer = new Timer();
 
+      if(msg.data && msg.data.hours) {
+        seconds = msg.data.hours * 60 * 60;
+      }
+
+      createStopwatch(seconds);
+      activeTimer.setSeconds(seconds);
+
+      // manually post tick to update popup
+      port.postMessage({
+        action: 'tick',
+        data: {
+          time: activeTimer.seconds * 1000,
+          hours: activeTimer.hours,
+          formatted: activeTimer.formatted()
+        }
+      })
     }
   });
   port.onDisconnect.addListener(function() {
@@ -105,6 +118,7 @@ var createStopwatch = function(startTime) {
         action: 'tick',
         data: {
           time: elapsed,
+          hours: activeTimer.hours,
           formatted: activeTimer.formatted()
         }
       });

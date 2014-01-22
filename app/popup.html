@@ -10,10 +10,12 @@
         <!-- endbuild -->
     </head>
     <body>
-      <h4 id="stopwatch">00:00:00</h4>
+      <div class="stopwatch">
+        <h2 id="stopwatch">00:00:00</h2>
+      </div>
       <div class="buttons">
-        <button id="start">Start</button>
-        <button id="stop">Pause</button>
+        <button id="toggle">Start</button>
+        <input type="text" id="hours" value="0.00">
         <button id="reset">Reset</button>
       </div>
       <textarea id="notes"></textarea>
@@ -24,9 +26,12 @@
       <select id="staff" name="staff_id">
         <option>-- Select Staff --</option>
       </select>
-      <br>
       <select id="task" name="task_id">
         <option>-- Select Task --</option>
       </select>
+      <br>
+      <div class="submit-button">
+        <button id="submit">Submit Time Log</button>
+      </div>
     </body>
 </html>

@@ -1,6 +1,30 @@
 /* Will be compiled down to a single stylesheet with your sass files */
 
 html {
-  width: 300px;
+  width: 225px;
 }
 
+body {
+  text-align: center;
+}
+
+textarea {
+  width: 100%;
+}
+select {
+  width: 100%;
+}
+.submit-button {
+  margin-top: 10px;
+}
+#toggle,
+#reset,
+#hours {
+  width: 60px
+}
+#toggle {
+  margin-right: 5px;
+}
+#reset {
+  margin-left: 5px;
+}
