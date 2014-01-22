@@ -1,6 +1,7 @@
 {
-  "name": "freshbookstrello",
-  "version": "0.0.0",
+  "name": "Freshbooks Timer",
+  "description": "An extension for tracking your time within a chrome extension and having it save on FreshBooks. It also pulls trello card information if you have one open",
+  "version": "0.0.1",
   "dependencies": {},
   "devDependencies": {}
 }

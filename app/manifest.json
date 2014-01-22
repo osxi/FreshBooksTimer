@@ -1,10 +1,11 @@
 {
     "name": "__MSG_appName__",
-    "version": "0.0.1",
+    "version": "0.0.4",
     "manifest_version": 2,
     "description": "__MSG_appDescription__",
     "permissions": [
-      "activeTab","*://*/"
+        "activeTab",
+        "*://*/"
     ],
     "icons": {
         "16": "images/icon-16.png",
@@ -15,13 +16,13 @@
         "page": "background.html",
         "persistent": true
     },
-  "browser_action": {
-    "default_icon": {
-      "19": "images/icon-19.png",
-      "38": "images/icon-38-inactive.png"
+    "browser_action": {
+        "default_icon": {
+            "19": "images/icon-19.png",
+            "38": "images/icon-38-inactive.png"
+        },
+        "default_title": "freshbookstrello",
+        "default_popup": "popup.html"
     },
-    "default_title": "freshbookstrello",
-    "default_popup": "popup.html"
-  },
-  "options_page": "options_custom/index.html"
+    "options_page": "options_custom/index.html"
 }

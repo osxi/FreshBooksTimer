@@ -263,7 +263,7 @@ module.exports = function (grunt) {
         compress: {
             dist: {
                 options: {
-                    archive: 'package/freshbookstrello.zip'
+                    archive: 'package/freshbookstimer.zip'
                 },
                 files: [{
                     expand: true,
