@@ -78,6 +78,9 @@ chrome.runtime.onConnect.addListener(function(port) {
     } else if (msg.action == "resetTimer" || msg.action == "setTimer") {
       var seconds = 0;
       setInactiveIcon();
+      if(msg.action == "resetTimer") {
+        activeTimer = new Timer();
+      }
 
       if(msg.data && msg.data.hours) {
         seconds = msg.data.hours * 60 * 60;
