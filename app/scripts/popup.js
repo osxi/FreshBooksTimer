@@ -4,14 +4,19 @@ var $ = jQuery, stopwatch, hours, currentHours,
 
 port.onMessage.addListener(function(msg){
   hours = $('#hours');
-  if(msg.action == 'tick' && msg.data && msg.data.formatted) {
+  if(msg.action == 'tick') {
     stopwatch.text(msg.data.formatted);
     $('#toggle').text('Pause');
 
-    if(msg.data.hours && !hours.is(':focus')) {
-      currentHours = Number(msg.data.hours)>toFixed(2)
+    if(!hours.is(':focus')) {
+      currentHours = Number(msg.data.hours).toFixed(2)
       hours.val(currentHours);
     }
+  } else if(msg.action == 'tickUpdate') {
+    stopwatch.text(msg.data.formatted);
+    $('#toggle').text('Start');
+    currentHours = Number(msg.data.hours).toFixed(2)
+    hours.val(currentHours);
   }
 });
 

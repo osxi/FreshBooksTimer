@@ -91,7 +91,7 @@ chrome.runtime.onConnect.addListener(function(port) {
 
       // manually post tick to update popup
       port.postMessage({
-        action: 'tick',
+        action: 'tickUpdate',
         data: {
           time: activeTimer.seconds * 1000,
           hours: activeTimer.hours,
