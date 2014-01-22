@@ -1,6 +1,9 @@
 'use strict';
 
-var $ = jQuery, stopwatch;
+var $ = jQuery, stopwatch, project_id, task_id, staff_id;
+project_id = localStorage['store.settings.defaultProject'];
+staff_id = localStorage['store.settings.defaultStaff'];
+task_id = localStorage['store.settings.defaultTask'];
 
 chrome.runtime.onInstalled.addListener(function (details) {
   console.log('previousVersion', details.previousVersion);
@@ -10,10 +13,14 @@ var Timer = function(options) {
   if(options == null) {
     options = {};
   }
-  this.seconds = options.seconds ? options.seconds : 0;
-  this.minutes = options.minutes ? options.minutes : 0;
-  this.hours = options.hours ? options.hours : 0.0;
-  this.notes = options.notes ? options.notes : '';
+
+  this.seconds    = options.seconds ? options.seconds : 0;
+  this.minutes    = options.minutes ? options.minutes : 0;
+  this.hours      = options.hours ? options.hours : 0.0;
+  this.notes      = options.notes ? options.notes : '';
+  this.project_id = project_id;
+  this.staff_id   = staff_id;
+  this.task_id    = task_id;
 }
 Timer.prototype.setSeconds = function(seconds) {
   this.seconds = seconds;

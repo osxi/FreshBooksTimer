@@ -41,7 +41,6 @@ chrome.runtime.onMessage.addListener(
 );
 
 window.onload = function() {
-  port.postMessage({action: 'loaded'});
   $(function() {
     var toggle = $('#toggle');
     stopwatch = $('#stopwatch');
@@ -131,10 +130,12 @@ window.onload = function() {
       });
     }
 
+
     var notes, staff, project, task,
         activeTimer = chrome.extension.getBackgroundPage().activeTimer;
 
     if(activeTimer) {
+      console.log("active timer!");
       stopwatch.text(activeTimer.formatted());
       $('#hours').text(Number(activeTimer.hours).toFixed(2));
 
@@ -142,15 +143,19 @@ window.onload = function() {
         $('#notes').val(notes);
       }
       if(staff = activeTimer.staff_id) {
-        $('#staff').val(staff);
+        var num = Number(staff.replace(/\"/g, ''));
+        $('#staff').val(num);
       }
       if(project = activeTimer.project_id) {
-        $('#project').val(project);
+        var num = Number(project.replace(/\"/g, ''));
+        $('#project').val(num);
       }
       if(task = activeTimer.task_id) {
-        $('#task').val(task);
+        var num = Number(task.replace(/\"/g, ''));
+        $('#task').val(num);
       }
     }
+
     // it's important this is executed after the values are loaded from memory
     // and set. if not, data pulled from the page will be set before it loads
     // them from the background.js
