@@ -72,6 +72,30 @@ this.manifest = {
             "type": "description",
             "text": "None imported"
         },
+        {
+            "tab": "Defaults",
+            "group": "Time Logging",
+            "name": "defaultProject",
+            "type": "popupButton",
+            "label": "Project",
+            "options": []
+        },
+        {
+            "tab": "Defaults",
+            "group": "Time Logging",
+            "name": "defaultStaff",
+            "type": "popupButton",
+            "label": "Staff",
+            "options": []
+        },
+        {
+            "tab": "Defaults",
+            "group": "Time Logging",
+            "name": "defaultTask",
+            "type": "popupButton",
+            "label": "Task",
+            "options": []
+        }
     ],
     "alignment": [
         [

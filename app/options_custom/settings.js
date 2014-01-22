@@ -1,5 +1,33 @@
 window.addEvent("domready", function () {
     var api = new FreshbooksApi();
+        projects = api.getData('projects');
+        tasks = api.getData('tasks');
+        staffs = api.getData('staffs');
+
+    jQuery.each(manifest['settings'], function(key, options){
+      if(projects && projects.length >0 && options.name === 'defaultProject') {
+        jQuery.each(projects, function(_, project){
+          manifest['settings'][key]['options'].push({
+            "value": project.project_id,
+            "text": project.name
+          });
+        });
+      } else if(staffs && staffs.length >0 && options.name === 'defaultStaff') {
+        jQuery.each(staffs, function(_, staff){
+          manifest['settings'][key]['options'].push({
+            "value": staff.staff_id,
+            "text": staff.first_name + ' ' + staff.last_name
+          });
+        });
+      } else if(tasks && tasks.length >0 && options.name === 'defaultTask') {
+        jQuery.each(tasks, function(_, task){
+          manifest['settings'][key]['options'].push({
+            "value": task.task_id,
+            "text": task.name
+          });
+        });
+      }
+    });
 
     new FancySettings.initWithManifest(function (settings) {
         var setText = function(name, text) {
@@ -8,7 +36,6 @@ window.addEvent("domready", function () {
         var text = '';
 
         function setProjects() {
-          var projects = api.getData('projects');
           if(projects && projects.length > 0) {
             text = 'Currently imported ' + projects.length + ' projects';
           } else {
@@ -18,7 +45,6 @@ window.addEvent("domready", function () {
         }
 
         function setTasks() {
-          var tasks = api.getData('tasks');
           if(tasks && tasks.length > 0) {
             text = 'Currently imported ' + tasks.length + ' projects';
           } else {
@@ -28,7 +54,6 @@ window.addEvent("domready", function () {
         }
 
         function setStaffs() {
-          var staffs = api.getData('staffs');
           if(staffs && staffs.length > 0) {
             text = 'Currently imported ' + staffs.length + ' staff';
           } else {

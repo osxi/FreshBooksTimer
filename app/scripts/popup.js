@@ -112,18 +112,24 @@ window.onload = function() {
       });
     });
 
-    $.each(projects, function(key, project){
-      var option = '<option value="'+project['project_id']+'">'+project['name']+'</option>';
-      projectSelect.append(option);
-    });
+    if(projects && projects.length) {
+      $.each(projects, function(key, project){
+        var option = '<option value="'+project['project_id']+'">'+project['name']+'</option>';
+        projectSelect.append(option);
+      });
+    }
+    if(tasks && tasks.length) {
     $.each(tasks, function(key, task){
       var option = '<option value="'+task['task_id']+'">'+task['name']+'</option>';
       taskSelect.append(option);
     });
-    $.each(staffs, function(key, staff){
-      var option = '<option value="'+staff['staff_id']+'">'+staff['first_name']+' '+staff['last_name']+'</option>';
-      staffSelect.append(option);
-    });
+    }
+    if(staffs && staffs.length) {
+      $.each(staffs, function(key, staff){
+        var option = '<option value="'+staff['staff_id']+'">'+staff['first_name']+' '+staff['last_name']+'</option>';
+        staffSelect.append(option);
+      });
+    }
 
     var notes, staff, project, task,
         activeTimer = chrome.extension.getBackgroundPage().activeTimer;
