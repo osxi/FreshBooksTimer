@@ -28,6 +28,7 @@ Timer.prototype.formatted = function() {
   }
   function defaultFormatMilliseconds(seconds) {
       var x = seconds, minutes, hours;
+      seconds = Math.floor(x % 60)
       x /= 60;
       minutes = Math.floor(x % 60);
       x /= 60;
@@ -56,7 +57,6 @@ chrome.runtime.onConnect.addListener(function(port) {
         activeTimer = new Timer();
       }
       if(msg.data) {
-        console.log(msg.data);
         if(msg.data.notes) {
           activeTimer.notes = msg.data.notes
         }
@@ -82,8 +82,6 @@ chrome.runtime.onConnect.addListener(function(port) {
       stopwatch.stopwatch('reset');
       activeTimer = new Timer();
 
-    } else if (msg.action == 'loaded') {
-      console.log('loaded popup');
     }
   });
   port.onDisconnect.addListener(function() {
@@ -113,15 +111,6 @@ var createStopwatch = function(startTime) {
     }
   });
 };
-
-chrome.browserAction.onClicked.addListener(function() {
-  console.log('clicked!')
-  if(openPort) {
-    openPort.postMessage({
-      action: 'clicked'
-    });
-  }
-});
 
 $(function() {
   createStopwatch(0);
