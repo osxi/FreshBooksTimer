@@ -2,20 +2,44 @@
 
 html {
   width: 225px;
+  height: 335px;
+  box-sizing: border-box;
 }
 
 body {
   text-align: center;
 }
 
+input[type=text] {
+  box-sizing: border-box;
+  border: 1px solid gainsboro;
+  border-radius: 5px;
+  padding: 3px;
+}
 textarea {
+  margin-top: 10px;
   width: 100%;
+  padding: 5px;
+  height: 50px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid gainsboro;
 }
 select {
   width: 100%;
 }
 .submit-button {
   margin-top: 10px;
+}
+#submit {
+  width: 100%;
+  background: rgb(79, 189, 88);
+  outline: none;
+  padding: 6px;
+  border-radius: 5px;
+  font-size: 13px;
+  color: white;
+  border: 1px solid green;
 }
 #toggle,
 #reset,
@@ -27,4 +51,11 @@ select {
 }
 #reset {
   margin-left: 5px;
+}
+.select2-container {
+  margin-top: 10px;
+}
+.select2-drop {
+  height: 135px;
+  overflow: scroll;
 }

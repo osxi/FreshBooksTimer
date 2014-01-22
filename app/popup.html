@@ -1,10 +1,12 @@
 <!doctype html>
 <html>
     <head>
+        <link href="styles/select2.css" rel="stylesheet">
         <link href="styles/main.css" rel="stylesheet">
         <!-- build:js scripts/popup.js -->
         <script src="scripts/jquery.js"></script>
         <script src="scripts/jquery.stopwatch.js"></script>
+        <script src="scripts/select2.js"></script>
         <script src="scripts/freshbooks_api.js"></script>
         <script src="scripts/popup.js"></script>
         <!-- endbuild -->
@@ -13,6 +15,7 @@
       <div class="stopwatch">
         <h2 id="stopwatch">00:00:00</h2>
       </div>
+      <div><p id="flash"></p></div>
       <div class="buttons">
         <button id="toggle">Start</button>
         <input type="text" id="hours" value="0.00">
@@ -20,18 +23,15 @@
       </div>
       <textarea id="notes"></textarea>
       <select id="project" name="project_id">
-        <option>-- Select Project --</option>
       </select>
       <br>
       <select id="staff" name="staff_id">
-        <option>-- Select Staff --</option>
       </select>
       <select id="task" name="task_id">
-        <option>-- Select Task --</option>
       </select>
       <br>
       <div class="submit-button">
-        <button id="submit">Submit Time Log</button>
+        <button id="submit">Save</button>
       </div>
     </body>
 </html>

@@ -1,5 +1,5 @@
 'use strict';
-var $ = jQuery, stopwatch, hours,
+var $ = jQuery, stopwatch, hours, currentHours,
     port = chrome.runtime.connect({name: "freshbooks-trello"});
 
 port.onMessage.addListener(function(msg){
@@ -9,7 +9,8 @@ port.onMessage.addListener(function(msg){
     $('#toggle').text('Pause');
 
     if(msg.data.hours && !hours.is(':focus')) {
-      hours.val(Number(msg.data.hours).toFixed(2));
+      currentHours = Number(msg.data.hours)>toFixed(2)
+      hours.val(currentHours);
     }
   }
 });
@@ -80,6 +81,32 @@ window.onload = function() {
         staffs        = api.getData('staffs'),
         staffSelect   = $('#staff');
 
+    $('#submit').click(function() {
+      port.postMessage({action: 'pauseTimer'});
+      toggle.text('Start');
+      var xhr = api.createTimeEntry({
+        project_id: projectSelect.val(),
+        task_id: taskSelect.val(),
+        staff_id: staffSelect.val(),
+        notes: $('#notes').val(),
+        hours: currentHours
+      });
+      xhr.then(function() {
+        port.postMessage({action: 'resetTimer'});
+        $('#notes').val('');
+        $('#flash').text('Submitted!');
+        setTimeout(function() {
+          $('#flash').text('');
+        }, 3000)
+      });
+      xhr.fail(function() {
+        $('#flash').text('Failed. Try again later.');
+        setTimeout(function() {
+          $('#flash').text('');
+        }, 3000)
+      });
+    });
+
     $.each(projects, function(key, project){
       var option = '<option value="'+project['project_id']+'">'+project['name']+'</option>';
       projectSelect.append(option);
@@ -118,6 +145,18 @@ window.onload = function() {
       chrome.tabs.executeScript(null, { file: "scripts/get_data.js" });
     });
 
+    $('#staff').select2({
+      placeholder: '-- Select Staff --',
+      width: '100%'
+    });
+    $('#project').select2({
+      placeholder: '-- Select Project --',
+      width: '100%'
+    });
+    $('#task').select2({
+      placeholder: '-- Select Task --',
+      width: '100%'
+    });
 
   });
 }
