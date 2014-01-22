@@ -23,16 +23,5 @@
     "default_title": "freshbookstrello",
     "default_popup": "popup.html"
   },
-  "options_page": "options_custom/index.html",
-  "content_scripts": [
-    {
-      "matches": [
-        "*://*.trello.com/*"
-      ],
-      "js": [
-        "scripts/jquery.js",
-        "scripts/contentscript.js"
-      ]
-    }
-  ]
+  "options_page": "options_custom/index.html"
 }
