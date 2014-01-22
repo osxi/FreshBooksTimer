@@ -128,20 +128,22 @@ window.onload = function() {
     var notes, staff, project, task,
         activeTimer = chrome.extension.getBackgroundPage().activeTimer;
 
-    stopwatch.text(activeTimer.formatted());
-    $('#hours').text(Number(activeTimer.hours).toFixed(2));
+    if(activeTimer) {
+      stopwatch.text(activeTimer.formatted());
+      $('#hours').text(Number(activeTimer.hours).toFixed(2));
 
-    if(notes = activeTimer.notes) {
-      $('#notes').val(notes);
-    }
-    if(staff = activeTimer.staff_id) {
-      $('#staff').val(staff);
-    }
-    if(project = activeTimer.project_id) {
-      $('#project').val(project);
-    }
-    if(task = activeTimer.task_id) {
-      $('#task').val(task);
+      if(notes = activeTimer.notes) {
+        $('#notes').val(notes);
+      }
+      if(staff = activeTimer.staff_id) {
+        $('#staff').val(staff);
+      }
+      if(project = activeTimer.project_id) {
+        $('#project').val(project);
+      }
+      if(task = activeTimer.task_id) {
+        $('#task').val(task);
+      }
     }
     // it's important this is executed after the values are loaded from memory
     // and set. if not, data pulled from the page will be set before it loads
