@@ -42,21 +42,21 @@ window.addEvent("domready", function () {
 
         settings.manifest.importStaff.addEvent('action', function() {
           api.getStaff().then(function(staff){
-            api.storeData('staffs', staff['staffs']);
+            api.storeData('staffs', staff);
             setStaffs();
           });
           setText('staffsDescription', 'Loading...');
         });
         settings.manifest.importProjects.addEvent('action', function() {
           api.getProjects().then(function(projects){
-            api.storeData('projects', projects['projects']);
+            api.storeData('projects', projects);
             setProjects();
           });
           setText('projectsDescription', 'Loading...');
         });
         settings.manifest.importTasks.addEvent('action', function() {
           api.getTasks().then(function(tasks){
-            api.storeData('tasks', tasks['tasks']);
+            api.storeData('tasks', tasks);
             setTasks();
           });
           setText('tasksDescription', 'Loading...');
