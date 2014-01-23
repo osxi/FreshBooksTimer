@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
     <head>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <!-- build:css styles/popup.css -->
         <link href="styles/select2.css" rel="stylesheet">
         <link href="styles/main.css" rel="stylesheet">
@@ -20,28 +21,36 @@
         <script src="scripts/freshbooks_api.js"></script>
         <script src="scripts/popup.js"></script>
         <!-- endbuild -->
+
     </head>
     <body>
+      <div><p id="flash"></p></div>
       <div class="stopwatch">
         <h2 id="stopwatch">00:00:00</h2>
       </div>
-      <div><p id="flash"></p></div>
       <div class="buttons">
         <button id="toggle">Start</button>
         <input type="text" id="hours" value="0.00">
         <button id="reset">Reset</button>
       </div>
-      <textarea id="notes"></textarea>
-      <select id="project" name="project_id">
-      </select>
-      <br>
-      <select id="staff" name="staff_id">
-      </select>
-      <select id="task" name="task_id">
-      </select>
+
+      <textarea id="notes" name="notes"></textarea>
+      <select id="project" name="project_id"></select>
+      <select id="staff" name="staff_id"></select>
+      <select id="task" name="task_id"></select>
+
       <br>
       <div class="submit-button">
         <button id="submit">Save</button>
+      </div>
+      <div id="loading">
+        <p>
+          Loading...
+        </p>
+        <div class="spinner"></div>
+        <small>
+          May take a sec to boot up heroku...
+        </small>
       </div>
     </body>
 </html>

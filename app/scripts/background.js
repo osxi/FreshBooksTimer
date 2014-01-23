@@ -113,7 +113,6 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 var createStopwatch = function(startTime) {
-  console.log('create sotpwatch..');
   if(stopwatch) {
     stopwatch.stopwatch('destroy');
   }

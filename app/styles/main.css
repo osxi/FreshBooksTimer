@@ -2,7 +2,7 @@
 
 html {
   width: 225px;
-  height: 335px;
+  height: 355px;
   box-sizing: border-box;
 }
 
@@ -10,17 +10,26 @@ body {
   text-align: center;
 }
 
+
+html, body, p, select, input, button, textarea, h1, h2, h3 {
+  font-family: 'Open Sans', sans-serif;
+}
+
 input[type=text] {
   box-sizing: border-box;
   border: 1px solid gainsboro;
   border-radius: 5px;
   padding: 3px;
+  height: 34px;
+  font-size: 15px;
+  outline: none;
 }
 textarea {
   margin-top: 10px;
   width: 100%;
+  font-size: 15px;
   padding: 5px;
-  height: 50px;
+  height: 60px;
   box-sizing: border-box;
   border-radius: 5px;
   border: 1px solid gainsboro;
@@ -31,15 +40,27 @@ select {
 .submit-button {
   margin-top: 10px;
 }
-#submit {
-  width: 100%;
-  background: rgb(79, 189, 88);
+button {
   outline: none;
   padding: 6px;
   border-radius: 5px;
-  font-size: 13px;
+  font-size: 14px;
   color: white;
+  background: gainsboro;
+  background: rgb(2, 154, 255);
+  border: 1px solid rgb(0, 92, 255)
+}
+button:hover {
+  cursor: pointer;
+  background: rgb(0, 144, 235);
+}
+#submit {
+  width: 100%;
+  background: rgb(79, 189, 88);
   border: 1px solid green;
+}
+#submit:hover {
+  background: rgb(59, 179, 28);
 }
 #toggle,
 #reset,
@@ -54,8 +75,74 @@ select {
 }
 .select2-container {
   margin-top: 10px;
+  font-size: 14px;
 }
 .select2-drop {
   height: 135px;
   overflow: scroll;
+}
+
+#flash {
+  display: none;
+  padding: 5px;
+  color: white;
+}
+#flash.success {
+  background: rgb(79, 189, 88);
+}
+#flash.error {
+  background: red;
+}
+
+#loading {
+  display: none;
+  background: rgba(0,0,0,0.62);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: white;
+  padding-top: 75px;
+}
+#loading small {
+  display: block;
+  margin-top: 12px;
+}
+
+/* http://www.designcouch.com/home/why/2013/05/23/dead-simple-pure-css-loading-spinner/ */
+.spinner {
+height:60px;
+width:60px;
+margin:0px auto;
+position:relative;
+-webkit-animation: rotation .6s infinite linear;
+-moz-animation: rotation .6s infinite linear;
+-o-animation: rotation .6s infinite linear;
+animation: rotation .6s infinite linear;
+border-left:6px solid rgba(0,174,239,.15);
+border-right:6px solid rgba(0,174,239,.15);
+border-bottom:6px solid rgba(0,174,239,.15);
+border-top:6px solid rgba(0,174,239,.8);
+border-radius:100%;
+}
+
+@-webkit-keyframes rotation {
+from {-webkit-transform: rotate(0deg);}
+to {-webkit-transform: rotate(359deg);}
+}
+
+@-moz-keyframes rotation {
+from {-moz-transform: rotate(0deg);}
+to {-moz-transform: rotate(359deg);}
+}
+
+@-o-keyframes rotation {
+from {-o-transform: rotate(0deg);}
+to {-o-transform: rotate(359deg);}
+}
+
+@keyframes rotation {
+from {transform: rotate(0deg);}
+to {transform: rotate(359deg);}
 }

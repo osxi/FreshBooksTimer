@@ -95,19 +95,22 @@ window.onload = function() {
         notes: $('#notes').val(),
         hours: currentHours
       });
+      $('#loading').fadeIn();
       xhr.then(function() {
         port.postMessage({action: 'resetTimer'});
         $('#notes').val('');
-        $('#flash').text('Submitted!');
-        setTimeout(function() {
-          $('#flash').text('');
-        }, 3000)
+        $('#flash').text('Submitted!').addClass('error').fadeIn();
       });
       xhr.fail(function() {
-        $('#flash').text('Failed. Try again later.');
+        $('#flash').text('Failed. Try again later.').addClass('error').fadeIn();
+      });
+      xhr.always(function() {
         setTimeout(function() {
-          $('#flash').text('');
-        }, 3000)
+          $('#flash').fadeOut(function() {
+            $(this).text('')
+          }).removeClass('error').removeClass('success');
+        }, 3000);
+        $('#loading').fadeOut();
       });
     });
 
@@ -179,3 +182,11 @@ window.onload = function() {
   });
 }
 
+// this is triggered when the popup is closed to persist the entered data to the
+// timer
+addEventListener("unload", function (event) {
+  $.each(['notes', 'project', 'staff', 'task'], function(id, key) {
+    var item = $('#'+key);
+    chrome.extension.getBackgroundPage().activeTimer[item.attr('name')] = item.val();
+  });
+}, true);
