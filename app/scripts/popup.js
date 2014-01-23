@@ -33,6 +33,10 @@ chrome.runtime.onMessage.addListener(
       if(cardData.item.name) {
         if($('#notes').val().trim().length === 0) {
           $('#notes').val(parseNote(cardData.item.name));
+        } else if(!chrome.extension.getBackgroundPage().activeTimer.running) {
+          $('#flash').addClass('error')
+            .text('Tried to load Trello Card title but there was already data in the notes section.')
+            .fadeIn();
         }
         // TODO: select project from dropdown with this cardData.project.name
       }
