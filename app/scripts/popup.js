@@ -1,25 +1,13 @@
 'use strict';
-var $ = jQuery, hours, currentHours,
-    port = chrome.runtime.connect({name: "freshbooks-trello"});
+var $ = jQuery;
+var port = chrome.runtime.connect({name: "freshbooks-trello"});
 
-var flash, buttons, inputs, stopwatch;
+var flash, buttons, inputs, stopwatch, loading, activeTimer, currentHours;
 
-port.onMessage.addListener(function(msg){
-  if(msg.action == 'tick') {
-    stopwatch.text(msg.data.formatted);
-    buttons.toggle.text('Pause');
-
-    if(!inputs.hours.element.is(':focus')) {
-      currentHours = Number(msg.data.hours).toFixed(2);
-      inputs.hours.val(currentHours);
-    }
-  } else if(msg.action == 'tickUpdate') {
-    stopwatch.text(msg.data.formatted);
-    buttons.toggle.text('Start');
-    currentHours = Number(msg.data.hours).toFixed(2)
-    inputs.hours.val(currentHours);
-  }
-});
+var api           = new FreshbooksApi(),
+    projects      = api.getData('projects'),
+    tasks         = api.getData('tasks'),
+    staffs        = api.getData('staffs');
 
 function initialize() {
   var button, input;
@@ -39,7 +27,7 @@ function initialize() {
       return this;
     },
     error: function(msg) {
-      this.element.addClass('remove').text(msg).fadeIn();
+      this.element.addClass('error').text(msg).fadeIn();
       this._delayFadeOut();
       return this;
     }
@@ -85,13 +73,27 @@ function initialize() {
     hours: input('#hours')
   };
   stopwatch = $('#stopwatch');
+  loading = $('#loading');
+  activeTimer = chrome.extension.getBackgroundPage().activeTimer;
 }
 
-// removes actual time that's applied from from Scrum for Trello
-function parseNote(note) {
-  var regex = /\[[\d.]+\]\s?/g;
-  return note.replace(regex, '');
-}
+port.onMessage.addListener(function(msg){
+  if(msg.action == 'tick') {
+    stopwatch.text(msg.data.formatted);
+    buttons.toggle.text('Pause');
+
+    if(!inputs.hours.element.is(':focus')) {
+      currentHours = Number(msg.data.hours).toFixed(2);
+      inputs.hours.val(currentHours);
+    }
+  } else if(msg.action == 'tickUpdate') {
+    stopwatch.text(msg.data.formatted);
+    buttons.toggle.text('Start');
+    currentHours = Number(msg.data.hours).toFixed(2)
+    inputs.hours.val(currentHours);
+  }
+});
+
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
@@ -109,9 +111,70 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
+// removes actual time that's applied from from Scrum for Trello
+function parseNote(note) {
+  var regex = /\[[\d.]+\]\s?/g;
+  return note.replace(regex, '');
+}
+
+function resetToggleButtonText() {
+  if(buttons.toggle.text().trim() === 'Pause') {
+    buttons.toggle.text('Start');
+  }
+}
+
+function populateSelectBoxOptions() {
+  if(projects && projects.length) {
+    $.each(projects, function(key, project){
+      var option = '<option value="'+project['project_id']+'">'+project['name']+'</option>';
+      inputs.project.element.append(option);
+    });
+  }
+  if(tasks && tasks.length) {
+    $.each(tasks, function(key, task){
+      var option = '<option value="'+task['task_id']+'">'+task['name']+'</option>';
+      inputs.task.element.append(option);
+    });
+  }
+  if(staffs && staffs.length) {
+    $.each(staffs, function(key, staff){
+      var option = '<option value="'+staff['staff_id']+'">'+staff['first_name']+' '+staff['last_name']+'</option>';
+      inputs.staff.element.append(option);
+    });
+  }
+}
+function populateSelectBoxValues() {
+  if(activeTimer) {
+    stopwatch.text(activeTimer.formatted());
+    inputs.hours.text(Number(activeTimer.hours).toFixed(2));
+
+    if(activeTimer.notes) {
+      inputs.notes.val(activeTimer.notes);
+    }
+    if(activeTimer.staff_id) {
+      var num = Number(activeTimer.staff_id.replace(/\"/g, ''));
+      inputs.staff.val(num);
+    }
+    if(activeTimer.project_id) {
+      var num = Number(activeTimer.project_id.replace(/\"/g, ''));
+      inputs.project.val(num);
+    }
+    if(activeTimer.task_id) {
+      var num = Number(activeTimer.task_id.replace(/\"/g, ''));
+      inputs.task.val(num);
+    }
+  }
+}
+
 window.onload = function() {
   initialize();
 
+  ////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////
+  // Input Click Bindings
+  ////////////////////////////////////////////////////////
+
+  // Toggle timer
   buttons.toggle.element.click(function() {
     if(buttons.toggle.text().trim() === 'Start') {
       port.postMessage({
@@ -129,96 +192,52 @@ window.onload = function() {
       buttons.toggle.text('Start');
     }
   });
-  function resetToggleButtonText() {
-    if(buttons.toggle.text().trim() === 'Pause') {
-      buttons.toggle.text('Start');
-    }
-  }
+
+  // Reset timer
   buttons.reset.element.click(function() {
     inputs.notes.val('');
     port.postMessage({action: 'resetTimer'});
     resetToggleButtonText();
   });
+
+  // On hours change, update stopwatch hours
   inputs.hours.element.on('change', function() {
     port.postMessage({action: 'setTimer', data: { hours: inputs.hours.val().trim() }});
     resetToggleButtonText();
   });
-  var api           = new FreshbooksApi(),
-      projects      = api.getData('projects'),
-      projectSelect = $('#project'),
-      tasks         = api.getData('tasks'),
-      taskSelect    = $('#task'),
-      staffs        = api.getData('staffs'),
-      staffSelect   = $('#staff');
 
-  $('#submit').click(function() {
+  // Submit time entry to Freshbooks
+  buttons.submit.element.click(function() {
     port.postMessage({action: 'pauseTimer'});
-    toggle.text('Start');
+    buttons.toggle.text('Start');
     var xhr = api.createTimeEntry({
-      project_id: projectSelect.val(),
-      task_id: taskSelect.val(),
-      staff_id: staffSelect.val(),
-      notes: $('#notes').val(),
-      hours: currentHours
+      project_id:  inputs.project.val(),
+      task_id:     inputs.task.val(),
+      staff_id:    inputs.staff.val(),
+      notes:       inputs.notes.val(),
+      hours:       currentHours
     });
-    $('#loading').fadeIn();
+
+    loading.fadeIn();
+
     xhr.then(function() {
       port.postMessage({action: 'resetTimer'});
-      $('#notes').val('');
+      inputs.notes.val('');
       flash.success('Submitted.')
-    });
-    xhr.fail(function() {
+    }).fail(function() {
       flash.error('Failed. Please try again later.')
-    });
-    xhr.always(function() {
-      $('#loading').fadeOut();
+    }).always(function() {
+      loading.fadeOut();
     });
   });
 
-  if(projects && projects.length) {
-    $.each(projects, function(key, project){
-      var option = '<option value="'+project['project_id']+'">'+project['name']+'</option>';
-      projectSelect.append(option);
-    });
-  }
-  if(tasks && tasks.length) {
-  $.each(tasks, function(key, task){
-    var option = '<option value="'+task['task_id']+'">'+task['name']+'</option>';
-    taskSelect.append(option);
-  });
-  }
-  if(staffs && staffs.length) {
-    $.each(staffs, function(key, staff){
-      var option = '<option value="'+staff['staff_id']+'">'+staff['first_name']+' '+staff['last_name']+'</option>';
-      staffSelect.append(option);
-    });
-  }
+  //////////////////////////////////////////////////////////////
+  // End Input Click Bindings
+  //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
 
-
-  var notes, staff, project, task,
-      activeTimer = chrome.extension.getBackgroundPage().activeTimer;
-
-  if(activeTimer) {
-    console.log("active timer!");
-    stopwatch.text(activeTimer.formatted());
-    $('#hours').text(Number(activeTimer.hours).toFixed(2));
-
-    if(notes = activeTimer.notes) {
-      $('#notes').val(notes);
-    }
-    if(staff = activeTimer.staff_id) {
-      var num = Number(staff.replace(/\"/g, ''));
-      $('#staff').val(num);
-    }
-    if(project = activeTimer.project_id) {
-      var num = Number(project.replace(/\"/g, ''));
-      $('#project').val(num);
-    }
-    if(task = activeTimer.task_id) {
-      var num = Number(task.replace(/\"/g, ''));
-      $('#task').val(num);
-    }
-  }
+  populateSelectBoxOptions();
+  populateSelectBoxValues();
 
   // it's important this is executed after the values are loaded from memory
   // and set. if not, data pulled from the page will be set before it loads
@@ -227,15 +246,16 @@ window.onload = function() {
     chrome.tabs.executeScript(null, { file: "scripts/get_data.js" });
   });
 
-  $('#staff').select2({
+  // initialize select2 on inputs
+  inputs.staff.element.select2({
     placeholder: '-- Select Staff --',
     width: '100%'
   });
-  $('#project').select2({
+  inputs.project.element.select2({
     placeholder: '-- Select Project --',
     width: '100%'
   });
-  $('#task').select2({
+  inputs.task.element.select2({
     placeholder: '-- Select Task --',
     width: '100%'
   });
@@ -245,8 +265,9 @@ window.onload = function() {
 // this is triggered when the popup is closed to persist the entered data to the
 // timer
 addEventListener("unload", function (event) {
-  $.each(['notes', 'project', 'staff', 'task'], function(id, key) {
-    var item = $('#'+key);
-    chrome.extension.getBackgroundPage().activeTimer[item.attr('name')] = item.val();
+  $.each(inputs, function(key, input) {
+    if(key != 'hours') {
+      activeTimer[input.name()] = input.val();
+    }
   });
 }, true);
