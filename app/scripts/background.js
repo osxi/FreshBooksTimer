@@ -1,70 +1,32 @@
 'use strict';
 
-var $ = jQuery, stopwatch, project_id, task_id, staff_id;
-project_id = localStorage['store.settings.defaultProject'];
-staff_id = localStorage['store.settings.defaultStaff'];
-task_id = localStorage['store.settings.defaultTask'];
+var $ = jQuery, stopwatch, openPort, icon,
+    project_id = localStorage['store.settings.defaultProject'],
+    staff_id = localStorage['store.settings.defaultStaff'],
+    task_id = localStorage['store.settings.defaultTask'],
+    activeTimer = new Timer();
 
-chrome.runtime.onInstalled.addListener(function (details) {
-  console.log('previousVersion', details.previousVersion);
-});
-
-var Timer = function(options) {
-  if(options == null) {
-    options = {};
+icon = {
+  deactivate: function() {
+    chrome.browserAction.setIcon({path: 'images/icon-38-inactive.png'})
+    activeTimer.running = false;
+  },
+  activate: function() {
+    chrome.browserAction.setIcon({path: 'images/icon-38-active.png'})
+    activeTimer.running = true;
+  },
+  pause: function() {
+    chrome.browserAction.setIcon({path: 'images/icon-38-paused.png'})
+    activeTimer.running = false;
   }
-
-  this.seconds    = options.seconds ? options.seconds : 0;
-  this.minutes    = options.minutes ? options.minutes : 0;
-  this.hours      = options.hours ? options.hours : 0.0;
-  this.notes      = options.notes ? options.notes : '';
-  this.project_id = project_id;
-  this.staff_id   = staff_id;
-  this.task_id    = task_id;
-  this.running    = false;
 }
-Timer.prototype.setSeconds = function(seconds) {
-  this.seconds = seconds;
-  this.minutes = this.seconds / 60;
-  this.hours = this.minutes / 60;
-}
-Timer.prototype.formatted = function() {
-  function pad2(number) {
-    return (number < 10 ? '0' : '') + number;
-  }
-  function defaultFormatMilliseconds(seconds) {
-      var x = seconds, minutes, hours;
-      seconds = Math.floor(x % 60)
-      x /= 60;
-      minutes = Math.floor(x % 60);
-      x /= 60;
-      hours = Math.floor(x % 24);
-      return [pad2(hours), pad2(minutes), pad2(seconds)].join(':');
-  }
-  return defaultFormatMilliseconds(this.seconds);
-}
-var activeTimer = new Timer();
-var openPort;
-
-var setInactiveIcon = function() {
-  chrome.browserAction.setIcon({path: 'images/icon-38-inactive.png'})
-  activeTimer.running = false;
-};
-var setPausedIcon = function() {
-  chrome.browserAction.setIcon({path: 'images/icon-38-paused.png'})
-  activeTimer.running = false;
-};
-var setActiveIcon = function() {
-  chrome.browserAction.setIcon({path: 'images/icon-38-active.png'})
-  activeTimer.running = true;
-};
 
 chrome.runtime.onConnect.addListener(function(port) {
   console.assert(port.name == "freshbooks-trello");
   openPort = port;
   port.onMessage.addListener(function(msg) {
     if (msg.action == "startTimer") {
-      setActiveIcon();
+      icon.activate();
       if(!activeTimer) {
         activeTimer = new Timer();
       }
@@ -86,26 +48,25 @@ chrome.runtime.onConnect.addListener(function(port) {
       stopwatch.stopwatch('start');
 
     } else if (msg.action == 'pauseTimer') {
-      setPausedIcon();
+      icon.pause();
       stopwatch.stopwatch('stop');
 
     } else if (msg.action == "resetTimer" || msg.action == "setTimer") {
       var seconds = 0;
+
       if(msg.action == "resetTimer") {
-        setInactiveIcon();
+        icon.deactivate();
         activeTimer = new Timer();
       } else {
-        setPausedIcon();
-      }
-
-      if(msg.data && msg.data.hours) {
+        icon.pause();
         seconds = msg.data.hours * 60 * 60;
       }
 
       createStopwatch(seconds);
       activeTimer.setSeconds(seconds);
 
-      // manually post tick to update popup
+      // manually tick to update popup data since it will be paused and wont
+      // emit a tick
       port.postMessage({
         action: 'tickUpdate',
         data: {
