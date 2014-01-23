@@ -66,23 +66,26 @@ window.addEvent("domready", function () {
         setStaffs();
 
         settings.manifest.importStaff.addEvent('action', function() {
-          api.getStaff().then(function(staff){
-            api.storeData('staffs', staff);
+          api.getStaff().then(function(gotStaffs){
+            staffs = gotStaffs;
+            api.storeData('staffs', gotStaffs);
             setStaffs();
           });
           setText('staffsDescription', 'Loading...');
         });
         settings.manifest.importProjects.addEvent('action', function() {
-          api.getProjects().then(function(projects){
-            api.storeData('projects', projects);
+          api.getProjects().then(function(gotProjects){
+            projects = gotProjects;
+            api.storeData('projects', gotProjects);
             setProjects();
           });
           setText('projectsDescription', 'Loading...');
         });
         settings.manifest.importTasks.addEvent('action', function() {
-          api.getTasks().then(function(tasks){
-            api.storeData('tasks', tasks);
-            setTasks();
+          api.getTasks().then(function(gotTasks){
+            tasks = gotTasks;
+            api.storeData('tasks', gotTasks);
+            setTasks(tasks);
           });
           setText('tasksDescription', 'Loading...');
         });
