@@ -67,8 +67,10 @@ window.addEvent("domready", function () {
 
         settings.manifest.importStaff.addEvent('action', function() {
           api.getStaff().then(function(gotStaffs){
-            staffs = gotStaffs;
-            api.storeData('staffs', gotStaffs);
+            staffs = jQuery(gotStaffs).filter(function(_, staff) {
+              return staff.projects != null;
+            });
+            api.storeData('staffs', staffs);
             setStaffs();
           });
           setText('staffsDescription', 'Loading...');
