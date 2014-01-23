@@ -1,5 +1,5 @@
 'use strict';
-var $ = jQuery, stopwatch, hours, currentHours,
+var $ = jQuery, stopwatch, hours, currentHours, flash,
     port = chrome.runtime.connect({name: "freshbooks-trello"});
 
 port.onMessage.addListener(function(msg){
@@ -20,6 +20,28 @@ port.onMessage.addListener(function(msg){
   }
 });
 
+function initialize() {
+  flash = {
+    element: $('#flash'),
+    delayFadeOut: function() {
+      var self = this;
+      setTimeout(function() {
+        self.element.fadeOut(function() {
+          self.removeClass('success error');
+        });
+      }, 3000)
+    },
+    success: function(msg) {
+      this.element.addClass('success').text(msg).fadeIn();
+      this.delayFadeOut();
+    },
+    error: function(msg) {
+      this.element.addClass('remove').text(msg).fadeIn();
+      this.delayFadeOut();
+    }
+  }
+}
+
 // removes actual time that's applied from from Scrum for Trello
 function parseNote(note) {
   var regex = /\[[\d.]+\]\s?/g;
@@ -34,11 +56,9 @@ chrome.runtime.onMessage.addListener(
         if($('#notes').val().trim().length === 0) {
           $('#notes').val(parseNote(cardData.item.name));
         } else if(!chrome.extension.getBackgroundPage().activeTimer.running) {
-          $('#flash').addClass('error')
-            .text('Tried to load Trello Card title but there was already data in the notes section.')
-            .fadeIn();
+          flash.error('Tried to load Trello Card title but there was already data in the notes section.');
         }
-        // TODO: select project from dropdown with this cardData.project.name
+        // TODO: automatically select project from dropdown with this cardData.project.name
       }
     }
   }
@@ -46,6 +66,7 @@ chrome.runtime.onMessage.addListener(
 
 window.onload = function() {
   $(function() {
+    initialize();
     var toggle = $('#toggle');
     stopwatch = $('#stopwatch');
 
@@ -103,18 +124,12 @@ window.onload = function() {
       xhr.then(function() {
         port.postMessage({action: 'resetTimer'});
         $('#notes').val('');
-        $('#flash').text('Submitted!').addClass('success').fadeIn();
+        flash.success('Submitted.')
       });
       xhr.fail(function() {
-        $('#flash').text('Failed. Try again later.').addClass('error').fadeIn();
+        flash.error('Failed. Please try again later.')
       });
       xhr.always(function() {
-        setTimeout(function() {
-          $('#flash').fadeOut(function() {
-            $(this).text('')
-          }).removeClass('error').removeClass('success');
-        }, 3000);
-
         $('#loading').fadeOut();
       });
     });
