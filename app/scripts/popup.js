@@ -146,7 +146,7 @@ function populateSelectBoxOptions() {
 function populateSelectBoxValues() {
   if(activeTimer) {
     stopwatch.text(activeTimer.formatted());
-    inputs.hours.text(Number(activeTimer.hours).toFixed(2));
+    inputs.hours.val(Number(activeTimer.hours).toFixed(2));
 
     if(activeTimer.notes) {
       inputs.notes.val(activeTimer.notes);
