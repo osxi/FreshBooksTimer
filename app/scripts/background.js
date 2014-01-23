@@ -21,6 +21,7 @@ var Timer = function(options) {
   this.project_id = project_id;
   this.staff_id   = staff_id;
   this.task_id    = task_id;
+  this.running    = false;
 }
 Timer.prototype.setSeconds = function(seconds) {
   this.seconds = seconds;
@@ -47,12 +48,15 @@ var openPort;
 
 var setInactiveIcon = function() {
   chrome.browserAction.setIcon({path: 'images/icon-38-inactive.png'})
+  activeTimer.running = false;
 };
 var setPausedIcon = function() {
   chrome.browserAction.setIcon({path: 'images/icon-38-paused.png'})
+  activeTimer.running = false;
 };
 var setActiveIcon = function() {
   chrome.browserAction.setIcon({path: 'images/icon-38-active.png'})
+  activeTimer.running = true;
 };
 
 chrome.runtime.onConnect.addListener(function(port) {
