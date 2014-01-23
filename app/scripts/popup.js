@@ -99,7 +99,7 @@ window.onload = function() {
       xhr.then(function() {
         port.postMessage({action: 'resetTimer'});
         $('#notes').val('');
-        $('#flash').text('Submitted!').addClass('error').fadeIn();
+        $('#flash').text('Submitted!').addClass('success').fadeIn();
       });
       xhr.fail(function() {
         $('#flash').text('Failed. Try again later.').addClass('error').fadeIn();
@@ -110,6 +110,7 @@ window.onload = function() {
             $(this).text('')
           }).removeClass('error').removeClass('success');
         }, 3000);
+
         $('#loading').fadeOut();
       });
     });
