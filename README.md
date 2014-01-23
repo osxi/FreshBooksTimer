@@ -27,7 +27,7 @@ it's also open source and can be found
 ### Development
 
 1. `git clone https://github.com/jakecraige/FreshBooksTimer.git`
-2. Open Chrome, and browse to your [extensions list](chrome://extensions)
+2. Open Chrome, and browse to your extensions list at `chrome://extensions`
 3. Check the 'Developer mode' checkbox
 4. Click 'Load unpacked extension'
 5. Find the folder you just cloned and go to then app folder
@@ -36,7 +36,7 @@ it's also open source and can be found
 ## Setup
 
 1. Right click the FreshBooks Timer browser button and click options
-2. Enter your api url and auth token [how to get authentication
+2. Enter your api url and auth token: [how to get authentication
    token](http://community.freshbooks.com/support/what-is-my-authentication-token-api-and-where-can-i-get-it/)
 3. Go to the import data and click import on each item. (it may take a little
    longer for the first one since it will likely have to boot up the heroku
