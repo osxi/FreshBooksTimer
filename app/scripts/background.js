@@ -48,8 +48,11 @@ var openPort;
 var setInactiveIcon = function() {
   chrome.browserAction.setIcon({path: 'images/icon-38-inactive.png'})
 };
+var setPausedIcon = function() {
+  chrome.browserAction.setIcon({path: 'images/icon-38-paused.png'})
+};
 var setActiveIcon = function() {
-  chrome.browserAction.setIcon({path: 'images/icon-38.png'})
+  chrome.browserAction.setIcon({path: 'images/icon-38-active.png'})
 };
 
 chrome.runtime.onConnect.addListener(function(port) {
@@ -79,14 +82,16 @@ chrome.runtime.onConnect.addListener(function(port) {
       stopwatch.stopwatch('start');
 
     } else if (msg.action == 'pauseTimer') {
-      setInactiveIcon();
+      setPausedIcon();
       stopwatch.stopwatch('stop');
 
     } else if (msg.action == "resetTimer" || msg.action == "setTimer") {
       var seconds = 0;
-      setInactiveIcon();
       if(msg.action == "resetTimer") {
+        setInactiveIcon();
         activeTimer = new Timer();
+      } else {
+        setPausedIcon();
       }
 
       if(msg.data && msg.data.hours) {
