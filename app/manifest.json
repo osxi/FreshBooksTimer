@@ -1,6 +1,6 @@
 {
     "name": "__MSG_appName__",
-    "version": "0.0.27",
+    "version": "0.0.0",
     "manifest_version": 2,
     "description": "__MSG_appDescription__",
     "permissions": [
@@ -20,8 +20,24 @@
             "19": "images/icon-19.png",
             "38": "images/icon-38-inactive.png"
         },
-        "default_title": "freshbookstrello",
+        "default_title": "Freshbooks Timer",
         "default_popup": "popup.html"
     },
-    "options_page": "options_custom/index.html"
+    "options_page": "options_custom/index.html",
+    "permissions": [
+      "https://trello.com/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": [
+          "https://trello.com/*"
+        ],
+        "js": [
+          "scripts/jquery.js",
+          "scripts/content_script.js"
+        ],
+        "run_at": "document_end"
+
+      }
+    ]
 }

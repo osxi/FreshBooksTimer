@@ -23,8 +23,9 @@ icon = {
 
 chrome.runtime.onConnect.addListener(function(port) {
   console.assert(port.name == "freshbooks-trello");
+  console.log('got connection!');
   openPort = port;
-  port.onMessage.addListener(function(msg) {
+  port.onMessage.addListener(function(msg, _, sendResponse) {
     if (msg.action == "startTimer") {
       icon.activate();
       if(!activeTimer) {
@@ -76,7 +77,7 @@ chrome.runtime.onConnect.addListener(function(port) {
         }
       })
     }
-  });
+    });
   port.onDisconnect.addListener(function() {
     openPort = null;
   });
@@ -92,18 +93,37 @@ var createStopwatch = function(startTime) {
   stopwatch.bind('tick.stopwatch', function(e, elapsed) {
     var currentSeconds = (elapsed / 1000);
     activeTimer.setSeconds(currentSeconds);
+    var tickData = {
+      action: 'tick',
+      data: {
+        time: elapsed,
+        hours: activeTimer.hours,
+        formatted: activeTimer.formatted()
+      }
+    }
     if(openPort) {
-      openPort.postMessage({
-        action: 'tick',
-        data: {
-          time: elapsed,
-          hours: activeTimer.hours,
-          formatted: activeTimer.formatted()
-        }
-      });
+      openPort.postMessage(tickData);
     }
   });
 };
+
+// coming from trello content script
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.action == "getTime") {
+      sendResponse({time: activeTimer.formatted()});
+    } else if (request.action == 'toggleTime') {
+      if(activeTimer.running) {
+        icon.pause();
+        stopwatch.stopwatch('stop');
+      } else {
+        icon.activate();
+        stopwatch.stopwatch('start');
+      }
+    }
+  }
+);
+
 
 $(function() {
   createStopwatch(0);
