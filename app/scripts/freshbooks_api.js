@@ -1,5 +1,6 @@
 var defaults = {
-  appUrl: 'https://freshbooks-api.herokuapp.com/api/v1'
+  appUrl: 'https://freshbooks-api-node.herokuapp.com'
+  //appUrl: 'http://localhost:3000'
 };
 var FreshbooksApi = function() {
   this.apiUrl = localStorage.getItem('store.settings.apiUrl');

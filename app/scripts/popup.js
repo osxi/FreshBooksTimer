@@ -220,7 +220,7 @@ window.onload = function() {
 
     loading.fadeIn();
 
-    xhr.then(function() {
+    xhr.done(function() {
       port.postMessage({action: 'resetTimer'});
       inputs.notes.val('');
       flash.success('Submitted.')

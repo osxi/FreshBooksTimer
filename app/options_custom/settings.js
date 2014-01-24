@@ -57,9 +57,13 @@ window.addEvent("domready", function () {
               function mapIds(array, pluralKey, singularKey) {
                 var results = []
                 jQuery.each(array, function(_, item){
-                  if(item[pluralKey] && item[pluralKey][singularKey]) {
-                    jQuery.each(item[pluralKey][singularKey], function(_, entity) {
+                  if(jQuery.isArray(item[pluralKey])) {
+                    jQuery.each(item[pluralKey], function(_, entity) {
                       results.push(Number(entity[singularKey+'_id']));
+                    });
+                  } else if(item[pluralKey] && pluralKey == 'projects') {
+                    jQuery.each(item[pluralKey].split(/\s+/), function(_, id) {
+                      results.push(Number(id));
                     });
                   }
                 });
@@ -80,7 +84,7 @@ window.addEvent("domready", function () {
 
               staffs = [];
               jQuery.each(recStaffs[0], function(_, staff) {
-                if(staff.projects && staff.projects.project) {
+                if(staff.projects) {
                   staffs.push(staff);
                 }
               });
