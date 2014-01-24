@@ -1,8 +1,8 @@
 window.addEvent("domready", function () {
-    var api = new FreshbooksApi();
-        projects = api.getData('projects');
-        tasks = api.getData('tasks');
-        staffs = api.getData('staffs');
+    var api      = new FreshbooksApi();
+    var staffs   = api.getData('staffs');
+    var projects = api.getData('projects');
+    var tasks    = api.getData('tasks');
 
     jQuery.each(manifest['settings'], function(key, options){
       if(projects && projects.length >0 && options.name === 'defaultProject') {
@@ -33,64 +33,69 @@ window.addEvent("domready", function () {
         var setText = function(name, text) {
           jQuery(settings.manifest[name].element).text(text);
         }
-        var text = '';
 
-        function setProjects() {
-          if(projects && projects.length > 0) {
-            text = 'Currently imported ' + projects.length + ' projects';
+        function updateImportDescription() {
+          var text = '';
+          if(projects && tasks && staffs){
+            text += 'You have ' + projects.length + ' projects, ' + tasks.length;
+            text += ' tasks, and ' + staffs.length + ' staffs. No action needed.';
           } else {
-            text = 'You haven\'t imported any.'
+            text += 'Action needed. No data imported.'
           }
-          setText('projectsDescription', text);
+          setText('importDescription', text);
         }
+        updateImportDescription();
 
-        function setTasks() {
-          if(tasks && tasks.length > 0) {
-            text = 'Currently imported ' + tasks.length + ' projects';
-          } else {
-            text = 'You haven\'t imported any.'
-          }
-          setText('tasksDescription', text);
-        }
 
-        function setStaffs() {
-          if(staffs && staffs.length > 0) {
-            text = 'Currently imported ' + staffs.length + ' staff';
-          } else {
-            text = 'You haven\'t imported any.'
-          }
-          setText('staffsDescription', text);
-        }
-        setProjects();
-        setTasks();
-        setStaffs();
+        settings.manifest.importAll.addEvent('action', function() {
 
-        settings.manifest.importStaff.addEvent('action', function() {
-          api.getStaff().then(function(gotStaffs){
-            staffs = jQuery(gotStaffs).filter(function(_, staff) {
-              return staff.projects != null;
-            });
-            api.storeData('staffs', staffs);
-            setStaffs();
-          });
-          setText('staffsDescription', 'Loading...');
+          setText('importDescription', 'Loading...');
+          jQuery.when(api.getStaffs(), api.getProjects(), api.getTasks()).done(
+            function(recStaffs, recProjects, recTasks){
+
+              // Used to map out the belongsTo ids from the keys passed in
+              function mapIds(array, pluralKey, singularKey) {
+                var results = []
+                jQuery.each(array, function(_, item){
+                  if(item[pluralKey] && item[pluralKey][singularKey]) {
+                    jQuery.each(item[pluralKey][singularKey], function(_, entity) {
+                      results.push(Number(entity[singularKey+'_id']));
+                    });
+                  }
+                });
+                return results;
+              }
+              // creates the array of items that are associated with the
+              // parentArray passed in
+              function buildItemsArray(parentArray, itemsArray, pluralKey, singularKey) {
+                var mappedIds = mapIds(parentArray, pluralKey, singularKey);
+                    results = [];
+                jQuery.each(itemsArray, function(_, item){
+                  if(mappedIds.contains(Number(item[singularKey+'_id']))) {
+                    results.push(item);
+                  }
+                });
+                return results;
+              }
+
+              staffs = [];
+              jQuery.each(recStaffs[0], function(_, staff) {
+                if(staff.projects && staff.projects.project) {
+                  staffs.push(staff);
+                }
+              });
+              projects = buildItemsArray(staffs, recProjects[0], 'projects', 'project')
+              tasks    = buildItemsArray(projects, recTasks[0], 'tasks', 'task')
+              api.storeData('staffs', staffs);
+              api.storeData('projects', projects);
+              api.storeData('tasks', tasks);
+              updateImportDescription();
+
+            }
+          );
+
         });
-        settings.manifest.importProjects.addEvent('action', function() {
-          api.getProjects().then(function(gotProjects){
-            projects = gotProjects;
-            api.storeData('projects', gotProjects);
-            setProjects();
-          });
-          setText('projectsDescription', 'Loading...');
-        });
-        settings.manifest.importTasks.addEvent('action', function() {
-          api.getTasks().then(function(gotTasks){
-            tasks = gotTasks;
-            api.storeData('tasks', gotTasks);
-            setTasks(tasks);
-          });
-          setText('tasksDescription', 'Loading...');
-        });
+
     });
 
 });

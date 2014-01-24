@@ -2,8 +2,8 @@ var defaults = {
   appUrl: 'https://freshbooks-api.herokuapp.com/api/v1'
 };
 var FreshbooksApi = function() {
-  this.apiUrl = localStorage['store.settings.apiUrl'];
-  this.authToken = localStorage['store.settings.authToken'];
+  this.apiUrl = localStorage.getItem('store.settings.apiUrl');
+  this.authToken = localStorage.getItem('store.settings.authToken');
 };
 FreshbooksApi.prototype.generateUrl = function(path) {
   var base     = defaults.appUrl + '/' + path,
@@ -17,7 +17,7 @@ FreshbooksApi.prototype.getProjects = function() {
 FreshbooksApi.prototype.getTasks = function() {
   return jQuery.getJSON(this.generateUrl('tasks'));
 };
-FreshbooksApi.prototype.getStaff = function() {
+FreshbooksApi.prototype.getStaffs = function() {
   return jQuery.getJSON(this.generateUrl('staffs'));
 };
 FreshbooksApi.prototype.createTimeEntry = function(data) {

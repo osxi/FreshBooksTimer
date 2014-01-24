@@ -38,7 +38,7 @@ it's also open source and can be found
 1. Right click the FreshBooks Timer browser button and click options
 2. Enter your api url and auth token: [how to get authentication
    token](http://community.freshbooks.com/support/what-is-my-authentication-token-api-and-where-can-i-get-it/)
-3. Go to the import data and click import on each item. (it may take a little
+3. Go to the import data and click "Import all". (it may take a little
    longer for the first one since it will likely have to boot up the heroku
    instance)
 4. Reload the page and go to the defaults tab

@@ -30,47 +30,17 @@ this.manifest = {
         {
             "tab": "Import Data",
             "group": "Data",
-            "name": "importProjects",
+            "name": "importAll",
             "type": "button",
-            "label": "Projects",
+            "label": "Import All",
             "text": "Import"
         },
         {
             "tab": "Import Data",
             "group": "Data",
-            "name": "projectsDescription",
+            "name": "importDescription",
             "type": "description",
-            "text": "None imported"
-        },
-        {
-            "tab": "Import Data",
-            "group": "Data",
-            "name": "importStaff",
-            "type": "button",
-            "label": "Staff",
-            "text": "Import"
-        },
-        {
-            "tab": "Import Data",
-            "group": "Data",
-            "name": "staffsDescription",
-            "type": "description",
-            "text": "None imported"
-        },
-        {
-            "tab": "Import Data",
-            "group": "Data",
-            "name": "importTasks",
-            "type": "button",
-            "label": "Tasks",
-            "text": "Import"
-        },
-        {
-            "tab": "Import Data",
-            "group": "Data",
-            "name": "tasksDescription",
-            "type": "description",
-            "text": "None imported"
+            "text": "Action needed. No data imported."
         },
         {
             "tab": "Defaults",
