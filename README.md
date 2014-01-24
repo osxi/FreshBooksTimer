@@ -5,7 +5,7 @@ v0.0.0
 
 Track development on Trello: [FreshBooks Timer Board](https://trello.com/b/VlS3lADH)
 
-[Imgur](http://i.imgur.com/82TuRqN.jpg)
+![Imgur](http://i.imgur.com/82TuRqN.jpg)
 
 ## Description:
 
