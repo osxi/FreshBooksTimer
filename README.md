@@ -17,10 +17,10 @@ of the card. Since I use Trello that is what I will be focusing on, but if
 someone wants to provide a similar feature on another project management tool
 that's completely welcome.
 
-It relies on a rails proxy to the FreshBooks API which prevents me from having
+It relies on a node proxy to the FreshBooks API which prevents me from having
 to mess with their xml api directly. It's running on a free Heroku instance and
 it's also open source and can be found
-[https://github.com/jakecraige/FreshBooksApiProxy](https://github.com/jakecraige/FreshBooksApiProxy)
+[https://github.com/jakecraige/FreshBooksApiProxyNode](https://github.com/jakecraige/FreshBooksApiProxyNode)
 
 ## Installation
 
