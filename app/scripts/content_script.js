@@ -1,17 +1,8 @@
-$(function() {
-  var timerContainer, timer;
-        timerContainer = $('<a id="fb-timer" class="header-btn"></a>');
-        timer = $('<span class="header-btn-text">00:00:00</span>');
-        timerContainer.append(timer)
-        $('.header-user').prepend(timerContainer);
+'use strict';
 
-  timerContainer.click(function() {
-    chrome.runtime.sendMessage({action: "toggleTime"});
-  });
-
-  setInterval(function() {
-    chrome.runtime.sendMessage({action: "getTime"}, function(response) {
-      timer.text(response.time);
-    });
-  }, 1000);
-});
+var s = document.createElement('script');
+s.src = chrome.extension.getURL('scripts/script.js');
+(document.head||document.documentElement).appendChild(s);
+s.onload = function() {
+    s.parentNode.removeChild(s);
+};

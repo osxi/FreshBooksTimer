@@ -2,7 +2,8 @@
 var $ = jQuery;
 var port = chrome.runtime.connect({name: "freshbooks-trello"});
 
-var flash, buttons, inputs, stopwatch, loading, activeTimer, currentHours;
+var flash, buttons, inputs, stopwatch, loading, activeTimer;
+var apiUrl, timesheetUrl, timesheetLink;
 
 var api           = new FreshbooksApi(),
     projects      = api.getData('projects'),
@@ -75,6 +76,14 @@ function initialize() {
   stopwatch = $('#stopwatch');
   loading = $('#loading');
   activeTimer = chrome.extension.getBackgroundPage().activeTimer;
+
+  apiUrl = localStorage.getItem('store.settings.apiUrl');
+  timesheetUrl = apiUrl.match(/\"(.*)\/a/)[1];
+  timesheetLink = $('#timesheet a');
+  if(!timesheetLink.attr('href')) {
+    timesheetLink.attr('href', timesheetUrl + '/timesheet');
+  }
+
 }
 
 port.onMessage.addListener(function(msg){
@@ -83,18 +92,19 @@ port.onMessage.addListener(function(msg){
     buttons.toggle.text('Pause');
 
     if(!inputs.hours.element.is(':focus')) {
-      currentHours = Number(msg.data.hours).toFixed(2);
-      inputs.hours.val(currentHours);
+      var hours = Number(msg.data.hours).toFixed(2);
+      inputs.hours.val(hours);
     }
   } else if(msg.action == 'tickUpdate') {
     stopwatch.text(msg.data.formatted);
     buttons.toggle.text('Start');
-    currentHours = Number(msg.data.hours).toFixed(2)
-    inputs.hours.val(currentHours);
+    var hours = Number(msg.data.hours).toFixed(2);
+    inputs.hours.val(hours);
   }
 });
 
 
+// Triggered when on a Trello page and it sends the information
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.cardData) {
@@ -180,10 +190,10 @@ window.onload = function() {
       port.postMessage({
         action: 'startTimer',
         data: {
-          notes: $('#notes').val(),
-          staff_id: $('#staff').val(),
-          project_id: $('#project').val(),
-          task_id: $('#task').val()
+          notes: inputs.notes.val(),
+          staff_id: inputs.staff.val(),
+          project_id: inputs.project.val(),
+          task_id: inputs.task.val()
         }
       });
       buttons.toggle.text('Pause');
@@ -215,7 +225,7 @@ window.onload = function() {
       task_id:     inputs.task.val(),
       staff_id:    inputs.staff.val(),
       notes:       inputs.notes.val(),
-      hours:       currentHours
+      hours:       inputs.hours.val()
     });
 
     loading.fadeIn();
@@ -223,7 +233,7 @@ window.onload = function() {
     xhr.done(function() {
       port.postMessage({action: 'resetTimer'});
       inputs.notes.val('');
-      flash.success('Submitted.')
+      flash.success('Saved.');
     }).fail(function() {
       flash.error('Failed. Please try again later.')
     }).always(function() {
@@ -243,7 +253,7 @@ window.onload = function() {
   // and set. if not, data pulled from the page will be set before it loads
   // them from the background.js
   chrome.tabs.executeScript(null, { file: "scripts/jquery.js" }, function() {
-    chrome.tabs.executeScript(null, { file: "scripts/get_data.js" });
+    chrome.tabs.executeScript(null, { file: "scripts/trello_parser.js" });
   });
 
   // initialize select2 on inputs

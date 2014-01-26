@@ -39,8 +39,9 @@ window.addEvent("domready", function () {
           if(projects && tasks && staffs){
             text += 'You have ' + projects.length + ' projects, ' + tasks.length;
             text += ' tasks, and ' + staffs.length + ' staffs. No action needed.';
+            text += ' Click import to reimport all data if you have added any new information';
           } else {
-            text += 'Action needed. No data imported.'
+            text += 'Action needed. No data imported. '
           }
           setText('importDescription', text);
         }
@@ -50,6 +51,7 @@ window.addEvent("domready", function () {
         settings.manifest.importAll.addEvent('action', function() {
 
           setText('importDescription', 'Loading...');
+
           jQuery.when(api.getStaffs(), api.getProjects(), api.getTasks()).done(
             function(recStaffs, recProjects, recTasks){
 

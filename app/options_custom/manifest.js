@@ -9,7 +9,7 @@ this.manifest = {
             "name": "apiUrl",
             "type": "text",
             "label": "API Url",
-            "text": "youraccount.freshbooks.com"
+            "text": "https://poeticsystems.freshbooks.com/api/2.1/xml-in"
         },
         {
             "tab": i18n.get("information"),
