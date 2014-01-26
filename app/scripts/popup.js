@@ -1,9 +1,8 @@
 'use strict';
 var $ = jQuery;
-var port = chrome.runtime.connect({name: "freshbooks-trello"});
-
-var flash, buttons, inputs, stopwatch, loading, activeTimer;
-var apiUrl, timesheetUrl, timesheetLink;
+var port = chrome.runtime.connect({name: "freshbooks-trello"}),
+    flash, buttons, inputs, stopwatch, loading, activeTimer,
+    apiUrl, timesheetUrl, timesheetLink;
 
 var api           = new FreshbooksApi(),
     projects      = api.getData('projects'),
@@ -103,7 +102,6 @@ port.onMessage.addListener(function(msg){
   }
 });
 
-
 // Triggered when on a Trello page and it sends the information
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
@@ -153,6 +151,7 @@ function populateSelectBoxOptions() {
     });
   }
 }
+
 function populateSelectBoxValues() {
   if(activeTimer) {
     stopwatch.text(activeTimer.formatted());
@@ -269,6 +268,29 @@ window.onload = function() {
     placeholder: '-- Select Task --',
     width: '100%'
   });
+
+  // Dynamically re-populate task inputs based on which the project has access
+  // to. Unfortunately selec2 likes to break when I do this so it's disabled for
+  // now
+  //inputs.project.element.on('change', function(){
+    //var projectId, project, projectTaskIds, options = [], foundTasks = [];
+    //inputs.task.element.find('option').remove();
+    //projectId  = inputs.project.element.val();
+    //project    = $(projects).filter(function(_, val) {
+      //return val['project_id'] == projectId;
+    //})[0];
+    //projectTaskIds = $(project['tasks']).map(function(_, val) {
+      //return val['task_id'];
+    //});
+    //$.each(tasks, function(key, task){
+      //if($.inArray(task['task_id'], projectTaskIds)) {
+        //foundTasks.push(task['task_id']);
+        //options.push($('<option value="'+task['task_id']+'">'+task['name']+'</option>'));
+      //}
+    //});
+    //inputs.task.element.append(options);
+    //inputs.task.element.val(foundTasks[0]);
+  //});
 
 }
 
