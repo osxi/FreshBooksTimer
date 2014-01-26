@@ -82,7 +82,10 @@ function initialize() {
   if(!timesheetLink.attr('href')) {
     timesheetLink.attr('href', timesheetUrl + '/timesheet');
   }
-
+  var item = localStorage.getItem('store.settings.hideStaffDropdown');
+  if(item == "true") {
+    inputs.staff.element.hide();
+  }
 }
 
 port.onMessage.addListener(function(msg){

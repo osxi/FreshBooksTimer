@@ -45,6 +45,16 @@ this.manifest = {
         {
             "tab": "Defaults",
             "group": "Time Logging",
+            "type": "description",
+            "text": "In this tab you can select defaults for when you first \
+                      open the popup. This is convenient for when you are \
+                      working on the same project for awhile and don't want \
+                      to have to select the project and task each time you \
+                      want to log some time."
+        },
+        {
+            "tab": "Defaults",
+            "group": "Time Logging",
             "name": "defaultProject",
             "type": "popupButton",
             "label": "Project",
@@ -57,6 +67,22 @@ this.manifest = {
             "type": "popupButton",
             "label": "Staff",
             "options": []
+        },
+        {
+            "tab": "Defaults",
+            "group": "Time Logging",
+            "name": "hideStaffDropdown",
+            "type": "checkbox",
+            "label": "Hide staff dropdown"
+        },
+        {
+            "tab": "Defaults",
+            "group": "Time Logging",
+            "type": "description",
+            "text": "This hides the staff dropdown in the popup. \
+                      Useful if you are only ever logging time as \
+                      yourself. Make sure you have the default staff \
+                      option above set correctly though!"
         },
         {
             "tab": "Defaults",
