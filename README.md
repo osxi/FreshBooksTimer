@@ -1,7 +1,10 @@
 FreshBooks Timer
 ----------------------------------
 v0.0.0
-*under active development*
+
+### Status Update
+
+I was using this for awhile without any problems until recently when I reinstalled it and it wouldn't work for some reason. I plan on either remaking this from scratch or fixing it. I don't have a timeline on this right now though.
 
 Track development on Trello: [FreshBooks Timer Board](https://trello.com/b/VlS3lADH)
 
@@ -57,7 +60,5 @@ it's also open source and can be found
 4. When you want to submit your time to FreshBooks, click save
 
 ===========================
-Copyright (c)2013 Jake Craige
+Copyright (c)2014 Poetic
 Distributed under MIT license
-
-http://jcraige.com
