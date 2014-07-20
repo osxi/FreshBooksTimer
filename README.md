@@ -2,12 +2,6 @@ FreshBooks Timer
 ----------------------------------
 v0.0.0
 
-### Status Update
-
-I was using this for awhile without any problems until recently when I reinstalled it and it wouldn't work for some reason. I plan on either remaking this from scratch or fixing it. I don't have a timeline on this right now though.
-
-Track development on Trello: [FreshBooks Timer Board](https://trello.com/b/VlS3lADH)
-
 ![Imgur](http://i.imgur.com/82TuRqN.jpg)
 
 ## Description:
