@@ -24,6 +24,7 @@ FreshTrello.prototype.getData = function() {
     }
   };
 };
+
 FreshTrello.prototype.addTimer = function() {
   var timerContainer, timer;
   if(this.interval) { clearInterval(this.interval); }
@@ -35,10 +36,11 @@ FreshTrello.prototype.addTimer = function() {
     if($('#fb-timer').length) {
       return;
     }
-    timerContainer = $('<a id="fb-timer" class="header-btn"></a>');
-    timer = $('<span class="header-btn-text">00:00:00</span>');
 
-    timerContainer.append(timer)
+    timerContainer = $('<a id="fb-timer" class="header-btn"></a>');
+    timer          = $('<span class="header-btn-text">00:00:00</span>');
+
+    timerContainer.append(timer);
 
     $('.header-user').prepend(timerContainer);
     timerContainer.click(function() {

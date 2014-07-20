@@ -1,9 +1,8 @@
 'use strict';
 
 $(function() {
-  console.log('parser!');
   var cardData = freshTrello.getData();
-  if(cardData) {
+  if (cardData) {
     chrome.runtime.sendMessage({cardData: cardData});
   }
 });

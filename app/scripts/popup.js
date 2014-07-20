@@ -1,6 +1,6 @@
 'use strict';
 var $ = jQuery;
-var port = chrome.runtime.connect({name: "freshbooks-trello"}),
+var port = chrome.runtime.connect({name: 'freshbooks-trello'}),
     flash, buttons, inputs, stopwatch, loading, activeTimer,
     apiUrl, timesheetUrl, timesheetLink;
 
@@ -13,91 +13,106 @@ function initialize() {
   var button, input;
   flash = {
     element: $('#flash'),
+
     _delayFadeOut: function() {
       var self = this;
       setTimeout(function() {
         self.element.fadeOut(function() {
           self.removeClass('success error');
         });
-      }, 3000)
+      }, 3000);
     },
+
     success: function(msg) {
       this.element.addClass('success').text(msg).fadeIn();
       this._delayFadeOut();
       return this;
     },
+
     error: function(msg) {
       this.element.addClass('error').text(msg).fadeIn();
       this._delayFadeOut();
       return this;
     }
   }
+
   button = function(selector) {
     return {
       element: $(selector),
+
       text: function(txt) {
-        if(txt == null) {
+        if (txt == null) {
           return this.element.text();
         }
         return this.element.text(txt);
       }
     }
   };
+
   buttons = {
     toggle: button('#toggle'),
-    reset: button('#reset'),
+    reset:  button('#reset'),
     submit: button('#submit')
   };
+
   input = function(selector) {
     return {
       element: $(selector),
+
       name: function() {
         return this.element.attr('name');
       },
+
       text: function(txt) {
         return this.element.text(txt);
       },
+
       val: function(data) {
-        if(data == null) {
+        if (data == null) {
           return this.element.val();
         }
-        return this.element.val(data)
+        return this.element.val(data);
       }
     }
   };
+
   inputs = {
-    notes: input('#notes'),
-    project: input('#project'),
-    staff: input('#staff'),
-    task: input('#task'),
-    hours: input('#hours')
+    notes:    input('#notes'),
+    project:  input('#project'),
+    staff:    input('#staff'),
+    task:     input('#task'),
+    hours:    input('#hours')
   };
-  stopwatch = $('#stopwatch');
-  loading = $('#loading');
+
+  stopwatch   = $('#stopwatch');
+  loading     = $('#loading');
   activeTimer = chrome.extension.getBackgroundPage().activeTimer;
 
-  apiUrl = localStorage.getItem('store.settings.apiUrl');
-  timesheetUrl = apiUrl.match(/\"(.*)\/a/)[1];
+  apiUrl        = localStorage.getItem('store.settings.apiUrl');
+  timesheetUrl  = apiUrl.match(/\"(.*)\/a/)[1];
   timesheetLink = $('#timesheet a');
-  if(!timesheetLink.attr('href')) {
+
+  if (!timesheetLink.attr('href')) {
     timesheetLink.attr('href', timesheetUrl + '/timesheet');
   }
+
   var item = localStorage.getItem('store.settings.hideStaffDropdown');
-  if(item == "true") {
+
+  if (item === "true") {
     inputs.staff.element.hide();
   }
 }
 
 port.onMessage.addListener(function(msg){
-  if(msg.action == 'tick') {
+  if (msg.action === 'tick') {
     stopwatch.text(msg.data.formatted);
     buttons.toggle.text('Pause');
 
-    if(!inputs.hours.element.is(':focus')) {
+    if (!inputs.hours.element.is(':focus')) {
       var hours = Number(msg.data.hours).toFixed(2);
       inputs.hours.val(hours);
     }
-  } else if(msg.action == 'tickUpdate') {
+  } else if (msg.action === 'tickUpdate') {
     stopwatch.text(msg.data.formatted);
     buttons.toggle.text('Start');
     var hours = Number(msg.data.hours).toFixed(2);
@@ -106,21 +121,19 @@ port.onMessage.addListener(function(msg){
 });
 
 // Triggered when on a Trello page and it sends the information
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.cardData) {
-      var cardData = request.cardData;
-      if(cardData.item.name) {
-        if(inputs.notes.val().trim().length === 0) {
-          inputs.notes.val(parseNote(cardData.item.name));
-        } else if(!chrome.extension.getBackgroundPage().activeTimer.running) {
-          flash.error('Tried to load Trello Card title but there was already data in the notes section.');
-        }
-        // TODO: automatically select project from dropdown with this cardData.project.name
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.cardData) {
+    var cardData = request.cardData;
+    if (cardData.item.name) {
+      if (inputs.notes.val().trim().length === 0) {
+        inputs.notes.val(parseNote(cardData.item.name));
+      } else if (!chrome.extension.getBackgroundPage().activeTimer.running) {
+        flash.error('Tried to load Trello Card title but there was already data in the notes section.');
       }
+      // TODO: automatically select project from dropdown with this cardData.project.name
     }
   }
-);
+});
 
 // removes actual time that's applied from from Scrum for Trello
 function parseNote(note) {
@@ -129,25 +142,27 @@ function parseNote(note) {
 }
 
 function resetToggleButtonText() {
-  if(buttons.toggle.text().trim() === 'Pause') {
+  if (buttons.toggle.text().trim() === 'Pause') {
     buttons.toggle.text('Start');
   }
 }
 
 function populateSelectBoxOptions() {
-  if(projects && projects.length) {
+  if (projects && projects.length) {
     $.each(projects, function(key, project){
       var option = '<option value="'+project['project_id']+'">'+project['name']+'</option>';
       inputs.project.element.append(option);
     });
   }
-  if(tasks && tasks.length) {
+
+  if (tasks && tasks.length) {
     $.each(tasks, function(key, task){
       var option = '<option value="'+task['task_id']+'">'+task['name']+'</option>';
       inputs.task.element.append(option);
     });
   }
-  if(staffs && staffs.length) {
+
+  if (staffs && staffs.length) {
     $.each(staffs, function(key, staff){
       var option = '<option value="'+staff['staff_id']+'">'+staff['first_name']+' '+staff['last_name']+'</option>';
       inputs.staff.element.append(option);
@@ -156,22 +171,22 @@ function populateSelectBoxOptions() {
 }
 
 function populateSelectBoxValues() {
-  if(activeTimer) {
+  if (activeTimer) {
     stopwatch.text(activeTimer.formatted());
     inputs.hours.val(Number(activeTimer.hours).toFixed(2));
 
-    if(activeTimer.notes) {
+    if (activeTimer.notes) {
       inputs.notes.val(activeTimer.notes);
     }
-    if(activeTimer.staff_id) {
+    if (activeTimer.staff_id) {
       var num = Number(activeTimer.staff_id.replace(/\"/g, ''));
       inputs.staff.val(num);
     }
-    if(activeTimer.project_id) {
+    if (activeTimer.project_id) {
       var num = Number(activeTimer.project_id.replace(/\"/g, ''));
       inputs.project.val(num);
     }
-    if(activeTimer.task_id) {
+    if (activeTimer.task_id) {
       var num = Number(activeTimer.task_id.replace(/\"/g, ''));
       inputs.task.val(num);
     }
@@ -180,13 +195,14 @@ function populateSelectBoxValues() {
 
 function js_yyyy_mm_dd_hh_mm_ss() {
   var now, year, month, day, hour, minute, second;
-  now = new Date();
-  year = "" + now.getFullYear();
-  month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
-  day = "" + now.getDate(); if (day.length == 1) { day = "0" + day; }
-  hour = "" + now.getHours(); if (hour.length == 1) { hour = "0" + hour; }
-  minute = "" + now.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
-  second = "" + now.getSeconds(); if (second.length == 1) { second = "0" + second; }
+  now    = new Date();
+  year   = "" + now.getFullYear();
+  month  = "" + (now.getMonth() + 1); if (month.length === 1) { month = "0" + month; }
+  day    = "" + now.getDate();        if (day.length === 1) { day = "0" + day; }
+  hour   = "" + now.getHours();       if (hour.length === 1) { hour = "0" + hour; }
+  minute = "" + now.getMinutes();     if (minute.length === 1) { minute = "0" + minute; }
+  second = "" + now.getSeconds();     if (second.length === 1) { second = "0" + second; }
+
   return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
 }
 
@@ -194,20 +210,19 @@ window.onload = function() {
   initialize();
 
   ////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////
   // Input Click Bindings
   ////////////////////////////////////////////////////////
 
   // Toggle timer
   buttons.toggle.element.click(function() {
-    if(buttons.toggle.text().trim() === 'Start') {
+    if (buttons.toggle.text().trim() === 'Start') {
       port.postMessage({
         action: 'startTimer',
         data: {
-          notes: inputs.notes.val(),
-          staff_id: inputs.staff.val(),
+          notes:      inputs.notes.val(),
+          staff_id:   inputs.staff.val(),
           project_id: inputs.project.val(),
-          task_id: inputs.task.val()
+          task_id:    inputs.task.val()
         }
       });
       buttons.toggle.text('Pause');
@@ -226,7 +241,12 @@ window.onload = function() {
 
   // On hours change, update stopwatch hours
   inputs.hours.element.on('change', function() {
-    port.postMessage({action: 'setTimer', data: { hours: inputs.hours.val().trim() }});
+    port.postMessage({
+      action: 'setTimer',
+      data: {
+        hours: inputs.hours.val().trim()
+      }
+    });
     resetToggleButtonText();
   });
 
@@ -250,7 +270,7 @@ window.onload = function() {
       inputs.notes.val('');
       flash.success('Saved.');
     }).fail(function() {
-      flash.error('Failed. Please try again later.')
+      flash.error('Failed. Please try again later.');
     }).always(function() {
       loading.fadeOut();
     });
@@ -314,7 +334,7 @@ window.onload = function() {
 // timer
 addEventListener("unload", function (event) {
   $.each(inputs, function(key, input) {
-    if(key != 'hours') {
+    if (key !== 'hours') {
       activeTimer[input.name()] = input.val();
     }
   });
