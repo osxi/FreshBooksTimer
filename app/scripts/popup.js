@@ -126,7 +126,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var cardData = request.cardData;
     if (cardData.item.name) {
       if (inputs.notes.val().trim().length === 0) {
-        inputs.notes.val(parseNote(cardData.item.name));
+        inputs.notes.val(parseCardName(cardData.item));
       } else if (!chrome.extension.getBackgroundPage().activeTimer.running) {
         flash.error('Tried to load Trello Card title but there was already data in the notes section.');
       }
@@ -135,10 +135,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
-// removes actual time that's applied from from Scrum for Trello
-function parseNote(note) {
-  var regex = /\[[\d.]+\]\s?/g;
-  return note.replace(regex, '');
+// Remove estimate/actual times applied by Scrum for Trello
+function parseCardName(card) {
+  var name  = card.name.replace(/^(\[.*\]|\(.*\))\s+/, '').
+                        replace(/\s+(\[.*\]|\(.*\))$/, '');
+  return name + " (" + card.id + ")";
 }
 
 function resetToggleButtonText() {
