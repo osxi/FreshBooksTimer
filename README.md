@@ -1,5 +1,7 @@
 FreshBooks Timer
 ----------------------------------
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/osxi/FreshBooksTimer.svg)](https://greenkeeper.io/)
 v0.0.0
 
 ![Imgur](http://i.imgur.com/82TuRqN.jpg)
